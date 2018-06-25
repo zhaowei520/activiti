@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CommerceMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		TB_COMMERCE
+	</sql>
+	
+	<!--数据字典表名 -->
+	<sql id="dicTableName">
+		SYS_DICTIONARIES
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		f.SALER,	
+		f.IS_CHECK_MONEY,	
+		f.C_DATE,	
+		f.CUSTOMER,	
+		f.CUSTOMER_TEL,	
+		f.EMERGENCY_CONTACT,	
+		f.EMERGENCY_TEL,	
+		f.REGISTER_AREA,	
+		f.REGISTER_ADDRESS,	
+		f.STAMP_COUNT,	
+		f.INITIAL_BANK,	
+		f.CONTRACT_MONEY,	
+		f.RESERVE_MONEY,	
+		f.TAIL_MONEY,	
+		f.BEGIN_DATE,	
+		f.DEADLINE,	
+		f.C_USER,	
+		f.M_DATE,	
+		f.M_USER,	
+		f.COMMERCE_ID
+	</sql>
+	
+	<!-- 字段用于新增 -->
+	<sql id="Field2">
+		SALER,	
+		IS_CHECK_MONEY,	
+		C_DATE,	
+		CUSTOMER,	
+		CUSTOMER_TEL,	
+		EMERGENCY_CONTACT,	
+		EMERGENCY_TEL,	
+		REGISTER_AREA,	
+		REGISTER_ADDRESS,	
+		STAMP_COUNT,	
+		INITIAL_BANK,	
+		CONTRACT_MONEY,	
+		RESERVE_MONEY,	
+		TAIL_MONEY,	
+		BEGIN_DATE,	
+		DEADLINE,	
+		C_USER,	
+		M_DATE,	
+		M_USER,	
+		COMMERCE_ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{SALER},	
+		#{IS_CHECK_MONEY},	
+		#{C_DATE},	
+		#{CUSTOMER},	
+		#{CUSTOMER_TEL},	
+		#{EMERGENCY_CONTACT},	
+		#{EMERGENCY_TEL},	
+		#{REGISTER_AREA},	
+		#{REGISTER_ADDRESS},	
+		#{STAMP_COUNT},	
+		#{INITIAL_BANK},	
+		#{CONTRACT_MONEY},	
+		#{RESERVE_MONEY},	
+		#{TAIL_MONEY},	
+		#{BEGIN_DATE},	
+		#{DEADLINE},	
+		#{C_USER},	
+		#{M_DATE},	
+		#{M_USER},	
+		#{COMMERCE_ID}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="Field2"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			COMMERCE_ID = #{COMMERCE_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			SALER = #{SALER},
+			IS_CHECK_MONEY = #{IS_CHECK_MONEY},
+			CUSTOMER = #{CUSTOMER},
+			CUSTOMER_TEL = #{CUSTOMER_TEL},
+			EMERGENCY_CONTACT = #{EMERGENCY_CONTACT},
+			EMERGENCY_TEL = #{EMERGENCY_TEL},
+			REGISTER_AREA = #{REGISTER_AREA},
+			REGISTER_ADDRESS = #{REGISTER_ADDRESS},
+			STAMP_COUNT = #{STAMP_COUNT},
+			INITIAL_BANK = #{INITIAL_BANK},
+			CONTRACT_MONEY = #{CONTRACT_MONEY},
+			RESERVE_MONEY = #{RESERVE_MONEY},
+			TAIL_MONEY = #{TAIL_MONEY},
+			BEGIN_DATE = #{BEGIN_DATE},
+			DEADLINE = #{DEADLINE},
+			COMMERCE_ID = COMMERCE_ID
+		where 
+			COMMERCE_ID = #{COMMERCE_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include> f
+		where 
+			f.COMMERCE_ID = #{COMMERCE_ID}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include> f
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+				f.CUSTOMER LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+		<if test="pd.lastStart!= null and pd.lastStart != ''"><!-- 关键词检索 -->
+			and			
+				f.C_DATE &gt;= #{pd.lastStart}
+		</if>
+		<if test="pd.lastEnd!= null and pd.lastEnd != ''"><!-- 关键词检索 -->
+			and			
+				f.C_DATE &lt;=  CONCAT(#{pd.lastEnd},' 23:59:59')
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include> f
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			COMMERCE_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!-- fh313596790qq(青苔) -->
+</mapper>
